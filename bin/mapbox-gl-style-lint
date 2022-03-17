@@ -1,0 +1,51 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const jsonlint = require('@mapbox/jsonlint-lines-primitives');
+
+const { lint } = require('../dist/main');
+
+const parseArguments = argv => {
+  const args = argv.slice(2);
+  const filepaths = [];
+
+  args.forEach(v => {
+    filepaths.push(v);
+  });
+
+  if (!filepaths.length) {
+    console.error(`Could not find filepaths. Exiting.
+
+Usage: ${process.argv[1]} files...`);
+    process.exit(1);
+  }
+
+  return { filepaths };
+}
+
+const outputErrors = (file, errors) => {
+  errors.forEach(e => {
+    console.log(`${file}:${e.line}: ${e.message}`);
+  });
+}
+
+const { filepaths } = parseArguments(process.argv);
+
+filepaths.forEach(file => {
+  fs.readFile(file, 'utf8', (err, data) => {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+
+    // Use jsonlint to get line numbers
+    const style = jsonlint.parse(data);
+
+    const errors = lint(style);
+
+    if (errors) {
+      outputErrors(file, errors);
+      process.exit(1);
+    }
+  });
+});

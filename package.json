@@ -30,6 +30,6 @@
     "parcel": "^2.0.1"
   },
   "bin": {
-    "mapbox-gl-style-linter": "bin/mapbox-gl-style-linter"
+    "mapbox-gl-style-lint": "bin/mapbox-gl-style-lint"
   }
 }

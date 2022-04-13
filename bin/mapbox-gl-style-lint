@@ -31,23 +31,24 @@ const { filepaths } = parseArguments(process.argv);
 
 let errors = [];
 
-filepaths.forEach(file => {
-  fs.readFile(file, 'utf8', (err, data) => {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
+filepaths.map(file => {
+  let style;
+  try {
+    style = fs.readFileSync(file, 'utf8');
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
 
-    // Use jsonlint to get line numbers
-    const style = jsonlint.parse(data);
+  // Use jsonlint to get line numbers
+  style = jsonlint.parse(style);
 
-    let styleErrors = lint(style);
+  let styleErrors = lint(style);
 
-    if (styleErrors) {
-      styleErrors = styleErrors.map(e => getErrorOutput(file, e));
-      errors = errors.concat(styleErrors);
-    }
-  });
+  if (styleErrors) {
+    styleErrors = styleErrors.map(e => getErrorOutput(file, e));
+    errors = errors.concat(styleErrors);
+  }
 });
 
 if (errors.length) {

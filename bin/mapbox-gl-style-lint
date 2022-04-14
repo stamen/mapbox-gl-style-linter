@@ -21,31 +21,37 @@ Usage: ${process.argv[1]} files...`);
   }
 
   return { filepaths };
-}
+};
 
-const outputErrors = (file, errors) => {
-  errors.forEach(e => {
-    console.log(`${file}:${e.line}: ${e.message}`);
-  });
-}
+const getErrorOutput = (file, error) => {
+  return `${file}:${error.line}: ${error.message}`;
+};
 
 const { filepaths } = parseArguments(process.argv);
 
-filepaths.forEach(file => {
-  fs.readFile(file, 'utf8', (err, data) => {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
+let errors = [];
 
-    // Use jsonlint to get line numbers
-    const style = jsonlint.parse(data);
+filepaths.map(file => {
+  let style;
+  try {
+    style = fs.readFileSync(file, 'utf8');
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
 
-    const errors = lint(style);
+  // Use jsonlint to get line numbers
+  style = jsonlint.parse(style);
 
-    if (errors) {
-      outputErrors(file, errors);
-      process.exit(1);
-    }
-  });
+  let styleErrors = lint(style);
+
+  if (styleErrors) {
+    styleErrors = styleErrors.map(e => getErrorOutput(file, e));
+    errors = errors.concat(styleErrors);
+  }
 });
+
+if (errors.length) {
+  errors.forEach(e => console.log(e));
+  process.exit(1);
+}

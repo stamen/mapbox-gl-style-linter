@@ -27,8 +27,15 @@ const layoutProperties = getPropertyIds('layout');
 const validateMisplacedProperties = (layer, ids, type) => {
   return Object.keys(layer)
     .filter(key => ids.includes(key))
-    .map(key => new ValidationError(key, layer[key], `layer '${layer.id}' contains '${key}' at the top level, but it should be in ${type}`));
-}
+    .map(
+      key =>
+        new ValidationError(
+          layer.id,
+          layer[key],
+          `contains '${key}' at the top level, but it should be in ${type}`
+        )
+    );
+};
 
 const validateMisplacedPaintProperties = layer => {
   return validateMisplacedProperties(layer, paintProperties, 'paint');
@@ -41,7 +48,7 @@ const validateMisplacedLayoutProperties = layer => {
 export const validateLayer = layer => {
   return [
     ...validateMisplacedLayoutProperties(layer),
-    ...validateMisplacedPaintProperties(layer),
+    ...validateMisplacedPaintProperties(layer)
   ];
 };
 

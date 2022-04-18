@@ -11,7 +11,7 @@ const formattedStyleSpecValidate = style => {
     matches.forEach(match => {
       const layerIndex = JSON.parse(match.replace('layers', ''));
       const layer = layers[layerIndex];
-      nextMessage = nextMessage.split(match).join(`layer '${layer.id}'`);
+      nextMessage = nextMessage.split(match).join(`${layer.id}`);
     });
     return { ...e, message: nextMessage };
   });

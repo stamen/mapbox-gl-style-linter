@@ -1,6 +1,28 @@
 import {validate as $9ijuO$validate, latest as $9ijuO$latest, ValidationError as $9ijuO$ValidationError} from "@mapbox/mapbox-gl-style-spec";
 
 
+const $f242104685f6bac6$export$6f34350ec0390498 = (style)=>{
+    const { layers: layers  } = style;
+    const validationErrors = $9ijuO$validate(style);
+    const formattedErrors = validationErrors.map((e)=>{
+        const { message: message  } = e;
+        const matches = message.match(/layers\[\d+\]/g);
+        if (!matches) return e;
+        let nextMessage = message;
+        matches.forEach((match)=>{
+            const layerIndex = JSON.parse(match.replace('layers', ''));
+            const layer = layers[layerIndex];
+            nextMessage = nextMessage.split(match).join(`layer '${layer.id}'`);
+        });
+        return {
+            ...e,
+            message: nextMessage
+        };
+    });
+    return formattedErrors;
+};
+
+
 
 /**
  * getPropertyIds
@@ -46,8 +68,8 @@ const $31a349932d4401a4$export$e28e65fc416331cf = (style)=>{
 
 var $31c22f01ea92cd95$export$2e2bcd8739ae039 = (style)=>{
     return [
-        ...$9ijuO$validate(style),
-        ...$31a349932d4401a4$export$e28e65fc416331cf(style), 
+        ...$f242104685f6bac6$export$6f34350ec0390498(style),
+        ...$31a349932d4401a4$export$e28e65fc416331cf(style)
     ];
 };
 

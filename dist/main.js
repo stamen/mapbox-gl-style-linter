@@ -6,6 +6,28 @@ function $parcel$export(e, n, v, s) {
 
 $parcel$export(module.exports, "lint", () => $19675af8dbf20766$export$2e2bcd8739ae039);
 
+const $f8241f23fbffd88a$export$6f34350ec0390498 = (style)=>{
+    const { layers: layers  } = style;
+    const validationErrors = $foOuJ$mapboxmapboxglstylespec.validate(style);
+    const formattedErrors = validationErrors.map((e)=>{
+        const { message: message  } = e;
+        const matches = message.match(/layers\[\d+\]/g);
+        if (!matches) return e;
+        let nextMessage = message;
+        matches.forEach((match)=>{
+            const layerIndex = JSON.parse(match.replace('layers', ''));
+            const layer = layers[layerIndex];
+            nextMessage = nextMessage.split(match).join(`layer '${layer.id}'`);
+        });
+        return {
+            ...e,
+            message: nextMessage
+        };
+    });
+    return formattedErrors;
+};
+
+
 
 /**
  * getPropertyIds
@@ -51,8 +73,8 @@ const $b7524ab39d5127e7$export$e28e65fc416331cf = (style)=>{
 
 var $19675af8dbf20766$export$2e2bcd8739ae039 = (style)=>{
     return [
-        ...$foOuJ$mapboxmapboxglstylespec.validate(style),
-        ...$b7524ab39d5127e7$export$e28e65fc416331cf(style), 
+        ...$f8241f23fbffd88a$export$6f34350ec0390498(style),
+        ...$b7524ab39d5127e7$export$e28e65fc416331cf(style)
     ];
 };
 

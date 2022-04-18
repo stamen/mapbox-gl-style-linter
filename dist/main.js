@@ -17,7 +17,7 @@ const $f8241f23fbffd88a$export$6f34350ec0390498 = (style)=>{
         matches.forEach((match)=>{
             const layerIndex = JSON.parse(match.replace('layers', ''));
             const layer = layers[layerIndex];
-            nextMessage = nextMessage.split(match).join(`layer '${layer.id}'`);
+            nextMessage = nextMessage.split(match).join(layer.id);
         });
         return {
             ...e,
@@ -50,7 +50,7 @@ const $b7524ab39d5127e7$var$layoutProperties = $b7524ab39d5127e7$var$getProperty
  * @returns {ValidationError[]} - an error for each id found, if any
  */ const $b7524ab39d5127e7$var$validateMisplacedProperties = (layer, ids, type)=>{
     return Object.keys(layer).filter((key)=>ids.includes(key)
-    ).map((key)=>new $foOuJ$mapboxmapboxglstylespec.ValidationError(key, layer[key], `layer '${layer.id}' contains '${key}' at the top level, but it should be in ${type}`)
+    ).map((key)=>new $foOuJ$mapboxmapboxglstylespec.ValidationError(layer.id, layer[key], `contains '${key}' at the top level, but it should be in ${type}`)
     );
 };
 const $b7524ab39d5127e7$var$validateMisplacedPaintProperties = (layer)=>{
@@ -62,7 +62,7 @@ const $b7524ab39d5127e7$var$validateMisplacedLayoutProperties = (layer)=>{
 const $b7524ab39d5127e7$export$a592d240053aaf40 = (layer)=>{
     return [
         ...$b7524ab39d5127e7$var$validateMisplacedLayoutProperties(layer),
-        ...$b7524ab39d5127e7$var$validateMisplacedPaintProperties(layer), 
+        ...$b7524ab39d5127e7$var$validateMisplacedPaintProperties(layer)
     ];
 };
 const $b7524ab39d5127e7$export$e28e65fc416331cf = (style)=>{

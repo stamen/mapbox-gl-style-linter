@@ -1,9 +1,6 @@
-import { validate } from '@mapbox/mapbox-gl-style-spec';
+import { formattedStyleSpecValidate } from './formatted-style-spec-validate';
 import { validateLayers } from './lint-layer.js';
 
-export default (style) => {
-  return [
-    ...validate(style),
-    ...validateLayers(style),
-  ];
+export default style => {
+  return [...formattedStyleSpecValidate(style), ...validateLayers(style)];
 };

@@ -6,6 +6,28 @@ function $parcel$export(e, n, v, s) {
 
 $parcel$export(module.exports, "lint", () => $19675af8dbf20766$export$2e2bcd8739ae039);
 
+const $f8241f23fbffd88a$export$6f34350ec0390498 = (style)=>{
+    const { layers: layers  } = style;
+    const validationErrors = $foOuJ$mapboxmapboxglstylespec.validate(style);
+    const formattedErrors = validationErrors.map((e)=>{
+        const { message: message  } = e;
+        const matches = message.match(/layers\[\d+\]/g);
+        if (!matches) return e;
+        let nextMessage = message;
+        matches.forEach((match)=>{
+            const layerIndex = JSON.parse(match.replace('layers', ''));
+            const layer = layers[layerIndex];
+            nextMessage = nextMessage.split(match).join(layer.id);
+        });
+        return {
+            ...e,
+            message: nextMessage
+        };
+    });
+    return formattedErrors;
+};
+
+
 
 /**
  * getPropertyIds
@@ -28,7 +50,7 @@ const $b7524ab39d5127e7$var$layoutProperties = $b7524ab39d5127e7$var$getProperty
  * @returns {ValidationError[]} - an error for each id found, if any
  */ const $b7524ab39d5127e7$var$validateMisplacedProperties = (layer, ids, type)=>{
     return Object.keys(layer).filter((key)=>ids.includes(key)
-    ).map((key)=>new $foOuJ$mapboxmapboxglstylespec.ValidationError(key, layer[key], `layer '${layer.id}' contains '${key}' at the top level, but it should be in ${type}`)
+    ).map((key)=>new $foOuJ$mapboxmapboxglstylespec.ValidationError(layer.id, layer[key], `contains '${key}' at the top level, but it should be in ${type}`)
     );
 };
 const $b7524ab39d5127e7$var$validateMisplacedPaintProperties = (layer)=>{
@@ -40,7 +62,7 @@ const $b7524ab39d5127e7$var$validateMisplacedLayoutProperties = (layer)=>{
 const $b7524ab39d5127e7$export$a592d240053aaf40 = (layer)=>{
     return [
         ...$b7524ab39d5127e7$var$validateMisplacedLayoutProperties(layer),
-        ...$b7524ab39d5127e7$var$validateMisplacedPaintProperties(layer), 
+        ...$b7524ab39d5127e7$var$validateMisplacedPaintProperties(layer)
     ];
 };
 const $b7524ab39d5127e7$export$e28e65fc416331cf = (style)=>{
@@ -51,8 +73,8 @@ const $b7524ab39d5127e7$export$e28e65fc416331cf = (style)=>{
 
 var $19675af8dbf20766$export$2e2bcd8739ae039 = (style)=>{
     return [
-        ...$foOuJ$mapboxmapboxglstylespec.validate(style),
-        ...$b7524ab39d5127e7$export$e28e65fc416331cf(style), 
+        ...$f8241f23fbffd88a$export$6f34350ec0390498(style),
+        ...$b7524ab39d5127e7$export$e28e65fc416331cf(style)
     ];
 };
 
